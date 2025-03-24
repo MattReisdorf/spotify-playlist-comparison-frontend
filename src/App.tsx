@@ -3,39 +3,70 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 
+// User Data response interface
+interface UserData {
+  country: string,
+  display_name: string,
+  email: string,
+  explicit_content: ExplicitContent,
+  external_urls: ExternalUrls,
+  followers: Followers,
+  href: string,
+  id: string,
+  images: Images[],
+  product: string,
+  type: string,
+  uri: string
+}
+
+interface ExplicitContent {
+  filter_enabled: boolean,
+  filter_locked: boolean
+}
+
+interface ExternalUrls {
+  spotify: string
+}
+
+interface Followers {
+  href: string | null,
+  total: number
+}
+
+interface Images {
+  height: number,
+  url: string,
+  width: number
+}
+
 function App() {
 
   const handleLogin = () => {
     window.location.href = "http://localhost:8080/login";
   }
 
-  const playlistUrl = "https://open.spotify.com/playlist/7pkWzBYeI8UpeKMfpGjgKD?si=ae044ff94d3f4fbb"
-  const playlistId = "ae044ff94d3f4fbb"
-  
-  const [userData, setUserData] = useState(null);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>();
 
   useEffect(() => {
     axios.get("http://localhost:8080/api/user", {withCredentials: true})
       .then(response => {
         setUserData(response.data);
-        console.log(response.data);
       })
       .catch(error => {
         console.error("Error fetching user data", error);
       });
   }, []);
 
-  
-
   if (userData) {
+    console.log(userData);
     return (
       <div>
-      {/* {userData ? <p>{JSON.stringify(userData, null, 2)}</p> : <p>Loading user data...</p>}     */}
+      <p>{userData.display_name}</p>
+      <img src = {userData.images[0].url} />
       </div>
     )
-  } else {
+  } 
+  else {
     return (
       <button onClick = {handleLogin}>Login</button>
     )
