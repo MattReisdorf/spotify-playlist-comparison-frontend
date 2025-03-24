@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
+import User from './components/user';
 
 // User Data response interface
 interface UserData {
@@ -60,10 +61,9 @@ function App() {
   if (userData) {
     console.log(userData);
     return (
-      <div>
-      <p>{userData.display_name}</p>
-      <img src = {userData.images[0].url} />
-      </div>
+      <>
+        <User userData={userData} />
+      </>
     )
   } 
   else {
