@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import User from './components/user';
+import PlaylistForm from './components/playlistForm';
 
 // User Data response interface
 interface UserData {
@@ -59,10 +60,10 @@ function App() {
   }, []);
 
   if (userData) {
-    console.log(userData);
     return (
       <>
         <User userData={userData} />
+        <PlaylistForm />
       </>
     )
   } 
