@@ -38,7 +38,7 @@ interface Images {
 export default function User({ userData }: { userData: UserData }) {
   return (
     <div>
-      <p>{userData.country}</p>
+      {/* <p>{userData.country}</p>
       <p>{userData.display_name}</p>
       <p>{userData.email}</p>
       <p>{userData.explicit_content.filter_enabled}</p>
@@ -53,7 +53,7 @@ export default function User({ userData }: { userData: UserData }) {
       <p>{userData.images[0].url}</p>
       <p>{userData.product}</p>
       <p>{userData.type}</p>
-      <p>{userData.uri}</p>
+      <p>{userData.uri}</p> */}
     </div>
   )
 }
