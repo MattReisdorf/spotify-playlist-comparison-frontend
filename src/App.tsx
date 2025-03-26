@@ -4,6 +4,7 @@ import './App.css';
 import axios from 'axios';
 import User from './components/user';
 import PlaylistForm from './components/playlistForm';
+import { Flex, Splitter } from 'antd';
 
 // User Data response interface
 interface UserData {
@@ -63,7 +64,36 @@ function App() {
     return (
       <>
         <User userData={userData} />
-        <PlaylistForm />
+        {/* <PlaylistForm /> */}
+        <Splitter
+          style = {{
+            height: 200,
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <Splitter.Panel>
+            <Flex
+              justify = "center"
+              align = "center"
+              style = {{
+                height: '100%'
+              }}
+            >
+              <PlaylistForm />
+            </Flex>
+          </Splitter.Panel>
+          <Splitter.Panel>
+            <Flex
+                justify = "center"
+                align = "center"
+                style = {{
+                  height: '100%'
+                }}
+              >
+                <PlaylistForm />
+              </Flex>
+          </Splitter.Panel>
+        </Splitter>
       </>
     )
   } 
