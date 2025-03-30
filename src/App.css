@@ -1,38 +1,61 @@
-.App {
-  text-align: center;
+.ant-splitter-bar {
+  width: 10px !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Main Splitter Bar */
+.ant-splitter-bar-dragger::before {
+  background: rgba(0, 0, 0) !important;
+  width: 2px !important;
+  /* border-radius: 20px; */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ant-splitter-bar-dragger:hover:not(.ant-splitter-bar-dragger-active)::before{
+  background:rgba(0,0,0) !important
+}
+.ant-splitter-bar-dragger-active::before {
+  background: rgb(90, 90, 90,) !important
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Smaller Icon Within Splitter Bar */
+.ant-splitter-bar-dragger::after {
+  background: rgba(70, 70, 70) !important
+}
+.ant-splitter-bar-dragger:hover:not(.ant-splitter-bar-dragger-active)::after{
+  background: #1ED760 !important
+  /* display: none !important */
+}
+.ant-splitter-bar-dragger-active::after {
+  background: #1ED760 !important
 }
 
-.App-link {
-  color: #61dafb;
+/* Showing Spotify Icon on Album Art Hover */
+.image-container {
+  position: relative;
+  display: inline-block;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ant-splitter-bar-dragger {
+  width: 10px;
+}
+
+.base-image {
+  display: block;
+  height: 90px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+}
+
+.hover-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  width: 50%;
+  aspect-ratio: 1;
+}
+
+.image-container:hover .hover-image {
+  display: block;
+  transition: 0.3s ease-in;
 }
