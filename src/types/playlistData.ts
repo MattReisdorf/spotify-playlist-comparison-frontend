@@ -86,4 +86,4 @@ interface Artists {
   uri: string;
 }
 
-export type {PlaylistResponse};
+export type {PlaylistResponse, TracksData};
