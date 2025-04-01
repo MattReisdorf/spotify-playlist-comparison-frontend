@@ -1,49 +1,42 @@
 import React from "react";
 import { UserData } from "../types/userData";
-import { Flex, Typography } from "antd";
+import { Flex } from "antd";
 import PlaylistsContainer from "./playlistsContainer";
 
 const MainContainer = ({ userData }: { userData: UserData }) => {
   return (
-    <Flex
-      className="main-container-container"
-      vertical
-      style={{
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <Flex vertical style={{ flex: 1, width: "100%", overflow: "hidden" }}>
       <Flex
-        className="user-data-container"
-        gap="middle"
-        justify="center"
+        justify="space-between"
         align="center"
+        gap="middle"
         style={{
-          width: "100%",
+          padding: 16,
         }}
       >
         <img
-          src={userData.images[0].url}
+          src="Spotify_Primary_Logo_RGB_Green.png"
+          alt="Spotify Primary Logo"
           style={{
             height: 50,
             width: 50,
-            borderRadius: 100,
           }}
         />
-        <Typography.Title
-          level={3}
-          style={{
-            color: "white",
-            margin: 0,
-          }}
-        >
-          {userData.display_name}
-        </Typography.Title>
+
+        <img
+          src={userData.images[0].url}
+          alt={`${userData.country} Profile`}
+          style={{ height: 50, width: 50, borderRadius: "50%" }}
+        />
       </Flex>
 
       <Flex
+        justify="center"
+        align="center"
         style={{
           flex: 1,
+          overflow: "hidden",
+          marginBottom: 16,
         }}
       >
         <PlaylistsContainer />

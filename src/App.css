@@ -18,7 +18,8 @@
 
 /* Smaller Icon Within Splitter Bar */
 .ant-splitter-bar-dragger::after {
-  background: rgba(70, 70, 70) !important
+  background: rgba(70, 70, 70) !important;
+  margin-top: 40px;
 }
 .ant-splitter-bar-dragger:hover:not(.ant-splitter-bar-dragger-active)::after{
   background: #1ED760 !important
@@ -37,6 +38,21 @@
 .ant-splitter-bar-dragger {
   width: 10px;
 }
+
+/* .scrollable-container::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+  position: absolute;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.scrollable-container {
+  scrollbar-gutter: stable overlay; 
+} */
 
 .base-image {
   display: block;
