@@ -1,5 +1,6 @@
 interface PlaylistResponse {
   id: string;
+  name: string;
   total: number;
   tracks: TracksData[];
 }

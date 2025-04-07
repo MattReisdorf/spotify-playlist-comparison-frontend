@@ -22,7 +22,7 @@ const App = () => {
         setUserDataLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching user data", error);
+        // console.error("Error fetching user data", error.response);
         setUserDataLoading(false);
       });
   }, []);
@@ -46,13 +46,25 @@ const App = () => {
   // Still Needs Work
   return (
     <Flex vertical style={{ height: "100vh", backgroundColor: "#000" }}>
-      <Flex justify="center" align="center" style={{ flex: 1 }}>
-        <Space direction="vertical" size="large" align="center">
-          <img
-            src="Spotify_Full_Logo_RGB_Green.png"
-            alt="Spotify Full Logo Green"
-            style={{ width: "clamp(180px, 30vw, 356px)", height: "auto" }}
-          />
+      <Flex justify="center" align="center">
+        <img
+          src="Spotify_Full_Logo_RGB_Green.png"
+          alt="Spotify Full Logo Green"
+          style={{
+            width: "clamp(180px, 30vw, 356px)",
+            height: "auto",
+            marginTop: 40,
+            marginBottom: 20,
+          }}
+        />
+      </Flex>
+      <Flex justify="center" align="flex-start" style={{ flex: 1 }}>
+        <Space
+          direction="vertical"
+          size="large"
+          align="center"
+          style={{ marginTop: 20 }}
+        >
           <Typography.Title level={3} style={{ color: "white" }}>
             Playlist Comparison
           </Typography.Title>
@@ -62,13 +74,14 @@ const App = () => {
           <Button
             type="primary"
             onClick={handleLogin}
-            style={{ height: 50, backgroundColor: "#1ED760" }}
+            style={{ height: 50, backgroundColor: "#1ED760", marginTop: 40 }}
           >
             <img
               src="Spotify_Primary_Logo_RGB_White.png"
               alt="Spotify Logo"
-              style={{ width: "20px", marginRight: 10 }}
+              style={{ width: "25px", marginRight: 10 }}
             />
+            {/* TODO - Wrap this in Typography */}
             Sign in with Spotify
           </Button>
         </Space>

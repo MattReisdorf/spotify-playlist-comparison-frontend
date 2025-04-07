@@ -1,17 +1,16 @@
 .ant-splitter-bar {
-  width: 10px !important;
+  width: 14px !important;
 }
 
 /* Main Splitter Bar */
 .ant-splitter-bar-dragger::before {
-  background: rgba(0, 0, 0) !important;
-  width: 2px !important;
-  /* border-radius: 20px; */
+  display: none !important;
 }
 
 .ant-splitter-bar-dragger:hover:not(.ant-splitter-bar-dragger-active)::before{
   background:rgba(0,0,0) !important
 }
+
 .ant-splitter-bar-dragger-active::before {
   background: rgb(90, 90, 90,) !important
 }
@@ -23,10 +22,35 @@
 }
 .ant-splitter-bar-dragger:hover:not(.ant-splitter-bar-dragger-active)::after{
   background: #1ED760 !important
-  /* display: none !important */
 }
 .ant-splitter-bar-dragger-active::after {
   background: #1ED760 !important
+}
+
+.ant-splitter-bar-dragger {
+  width: 10px;
+}
+
+.ant-radio-button-wrapper:hover {
+  color: rgb(158, 158, 158) !important;
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+  background-color: transparent !important;
+}
+
+.radio-group {
+  border: 1px solid black;
+  border-radius: 100px;
+}
+.radio-group:hover {
+  border: 1px solid rgb(46, 46, 46);
+  transition: cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+
+.radio-button:hover {
+  background-color: rgb(31, 31, 31);
+  transition: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 }
 
 /* Showing Spotify Icon on Album Art Hover */
@@ -34,25 +58,6 @@
   position: relative;
   display: inline-block;
 }
-
-.ant-splitter-bar-dragger {
-  width: 10px;
-}
-
-/* .scrollable-container::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-  position: absolute;
-}
-
-.scrollable-container::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.scrollable-container {
-  scrollbar-gutter: stable overlay; 
-} */
 
 .base-image {
   display: block;

@@ -7,11 +7,14 @@ import { PlaylistResponse, TracksData } from "../types/playlistData";
 
 import "../App.css";
 
-const PlaylistsContainer = () => {
+type FilterMode = "none" | "playlist1" | "playlist2";
+
+const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
   const [trackData, setTrackData] = useState<Record<string, PlaylistResponse>>(
     {}
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const [form] = Form.useForm();
   const abortControllerRef = useRef<Record<string, AbortController | null>>({});
 
@@ -43,6 +46,7 @@ const PlaylistsContainer = () => {
             resolve();
             setLoading(false);
           } else {
+            console.log("Non error Rejection:", response);
             reject();
             setLoading(false);
           }
@@ -51,6 +55,7 @@ const PlaylistsContainer = () => {
             resolve();
             setLoading(false);
           } else {
+            console.error(error.response);
             reject("Validation Failed; Try Again");
             setLoading(false);
           }
@@ -154,9 +159,11 @@ const PlaylistsContainer = () => {
           }}
         >
           <TrackDisplay
+            filterMode={filterMode}
             playlistData={playlist1}
             matchMap={matchMap1}
             loading={loading}
+            name="playlist1"
           />
         </div>
       </Splitter.Panel>
@@ -202,9 +209,11 @@ const PlaylistsContainer = () => {
           }}
         >
           <TrackDisplay
+            filterMode={filterMode}
             playlistData={playlist2}
             matchMap={matchMap2}
             loading={loading}
+            name="playlist2"
           />
         </div>
       </Splitter.Panel>
