@@ -19,10 +19,11 @@ const App = () => {
       .get("http://localhost:8080/api/user", { withCredentials: true })
       .then((response) => {
         setUserData(response.data);
+        console.log(response);
         setUserDataLoading(false);
       })
       .catch((error) => {
-        // console.error("Error fetching user data", error.response);
+        console.error("Error fetching user data", error.response);
         setUserDataLoading(false);
       });
   }, []);

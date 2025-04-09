@@ -33,6 +33,10 @@ root.render(
           colorPrimaryActive: "rgb(36, 36, 36)",
           borderRadius: 100,
         },
+        Message: {
+          contentBg: 'rgb(15, 15, 15)',
+          colorText: 'rgb(255, 255, 255)'
+        }
       },
     }}
   >

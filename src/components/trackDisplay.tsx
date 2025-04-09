@@ -1,8 +1,9 @@
-import { Card, Flex, Layout, Typography } from "antd";
-import React from "react";
+import { Card, Flex, Layout, Spin, Typography } from "antd";
+import React, { useState } from "react";
 import { PlaylistResponse, TracksData } from "../types/playlistData";
 import "../App.css";
 import { Content, Header } from "antd/es/layout/layout";
+import { LoadingOutlined } from '@ant-design/icons';
 
 type FilterMode = "none" | "playlist1" | "playlist2";
 
@@ -19,7 +20,8 @@ const TrackDisplay = ({
   name: string;
   filterMode: FilterMode;
 }) => {
-  console.log(playlistData);
+
+  console.log("TrackDisplay Props: " , { name, loading });
 
   const getTrackKey = (item: TracksData): string => {
     const name = item.track.name;
@@ -27,7 +29,28 @@ const TrackDisplay = ({
     return `${name}::${artist}`;
   };
 
-  if (!playlistData) return null;
+  // const [loadingTest, setLoadingTest] = useState<boolean>(true);
+
+  if (loading) {
+    return (
+      <Flex vertical justify="center" align="center" style = {{height: '100%'}}>
+        <Spin size = "large" tip = "Loading Playlist" 
+          indicator = {
+            <LoadingOutlined 
+              spin
+              style = {{
+                color: 'rgb(46, 46, 46)'
+              }}  
+            />
+          }
+        />
+      </Flex>
+    )
+  }
+
+  if (!playlistData) {
+    return null;
+  }
 
   const sortedTracks = [...playlistData.tracks].sort((a, b) => {
     const aArtist = a.track.artists[0]?.name.toLowerCase() || "";
@@ -42,7 +65,19 @@ const TrackDisplay = ({
     return aName.localeCompare(bName);
   });
 
-  console.log(filterMode);
+  console.log("filterMode: ", filterMode);
+
+  console.log("loading: ", loading);
+
+  // if (loading) {
+  //   return (
+  //     <img
+  //           src="Spotify_Primary_Logo_RGB_Green.png"
+  //           alt="Spotify Primary Logo"
+  //           style={{ height: 50, width: 50 }}
+  //         />
+  //   )
+  // }
 
   return (
     <Flex vertical>
@@ -89,13 +124,7 @@ const TrackDisplay = ({
                   key={track.id || index || matchKey}
                   style={{
                     backgroundColor: "rgb(15, 15, 15)",
-                    border: matchMap[matchKey]
-                      ? `1px ${
-                          matchMap[matchKey] === "match"
-                            ? "solid transparent"
-                            : "dashed red"
-                        }`
-                      : "1px solid transparent",
+                    border: "1px solid transparent",
                     color: "white",
                     overflow: "hidden",
                     margin: 8,

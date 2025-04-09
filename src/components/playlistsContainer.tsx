@@ -1,5 +1,5 @@
-import { Flex, Form, Input, Splitter } from "antd";
-import React, { useRef, useState } from "react";
+import { Flex, Form, Input, message, Splitter } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import * as lodash from "lodash";
 import TrackDisplay from "./trackDisplay";
@@ -13,57 +13,132 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
   const [trackData, setTrackData] = useState<Record<string, PlaylistResponse>>(
     {}
   );
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
+  const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({
+    playlist1: false,
+    playlist2: false,
+  });
   const [form] = Form.useForm();
   const abortControllerRef = useRef<Record<string, AbortController | null>>({});
 
+  const debouncedValidators = useRef<
+    Record<string, ReturnType<typeof lodash.debounce>>
+  >({});
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  // const getDebouncedValidator = (fieldName: string) => {
+  //   if (!debouncedValidators.current[fieldName]) {
+  //     debouncedValidators.current[fieldName] = lodash.debounce(
+  //       async (playlist: string, resolve: Function, reject: Function) => {
+  //         if (abortControllerRef.current[fieldName]) {
+  //           abortControllerRef.current[fieldName]!.abort();
+  //         }
+
+  //         const controller = new AbortController();
+  //         abortControllerRef.current[fieldName] = controller;
+
+  //         try {
+  //           setLoading(true);
+  //           const response = await axios.get(
+  //             `http://localhost:8080/api/playlist?playlist=${playlist}`,
+  //             {
+  //               withCredentials: true,
+  //               signal: controller.signal,
+  //             }
+  //           );
+
+  //           if (response.data.id) {
+  //             setTrackData((prev) => ({
+  //               ...prev,
+  //               [fieldName]: response.data,
+  //             }));
+  //             resolve();
+  //           } else {
+  //             reject();
+  //           }
+  //         } catch (error: any) {
+  //           if (axios.isCancel(error) || error.name === "CanceledError") {
+  //             resolve();
+  //           } else {
+  //             console.error(error.response?.data || error.message);
+  //             messageApi.open({
+  //               type: "error",
+  //               content: error.response?.data || "Something Went Wrong",
+  //             });
+  //             reject();
+  //           }
+  //         } finally {
+  //           setLoading(false);
+  //         }
+  //       },
+  //       500
+  //     );
+  //   }
+
+  //   return debouncedValidators.current[fieldName];
+  // };
+
   const getDebouncedValidator = (fieldName: string) => {
-    return lodash.debounce(
-      async (playlist: string, resolve: Function, reject: Function) => {
-        if (abortControllerRef.current[fieldName]) {
-          abortControllerRef.current[fieldName]!.abort();
-        }
-
-        const controller = new AbortController();
-        abortControllerRef.current[fieldName] = controller;
-
-        try {
-          setLoading(true);
-          const response = await axios.get(
-            `http://localhost:8080/api/playlist?playlist=${playlist}`,
-            {
-              withCredentials: true,
-              signal: controller.signal,
+    if (!debouncedValidators.current[fieldName]) {
+      debouncedValidators.current[fieldName] = lodash.debounce(
+        async (playlist: string, resolve: Function, reject: Function) => {
+          if (abortControllerRef.current[fieldName]) {
+            abortControllerRef.current[fieldName]!.abort();
+          }
+  
+          const controller = new AbortController();
+          abortControllerRef.current[fieldName] = controller;
+  
+          try {
+            setLoadingMap((prev) => ({ ...prev, [fieldName]: true }));
+  
+            const response = await axios.get(
+              `http://localhost:8080/api/playlist?playlist=${playlist}`,
+              {
+                withCredentials: true,
+                signal: controller.signal,
+              }
+            );
+  
+            if (response.data.id) {
+              setTrackData((prev) => ({
+                ...prev,
+                [fieldName]: response.data,
+              }));
+              resolve();
+            } else {
+              reject();
             }
-          );
-
-          if (response.data.id) {
-            setTrackData((prev) => ({
-              ...prev,
-              [fieldName]: response.data,
-            }));
-            resolve();
-            setLoading(false);
-          } else {
-            console.log("Non error Rejection:", response);
-            reject();
-            setLoading(false);
+          } catch (error: any) {
+            if (axios.isCancel(error) || error.name === "CanceledError") {
+              resolve();
+            } else {
+              console.error(error.response);
+              messageApi.open({
+                type: "error",
+                content: error.response?.data || "Something Went Wrong",
+                duration: 5,
+                className: 'custom-class',
+                style: {
+                  marginTop: '74px',
+                }
+              });
+              reject();
+            }
+          } finally {
+            setLoadingMap((prev) => ({ ...prev, [fieldName]: false }));
           }
-        } catch (error: any) {
-          if (axios.isCancel(error) || error.name === "CanceledError") {
-            resolve();
-            setLoading(false);
-          } else {
-            console.error(error.response);
-            reject("Validation Failed; Try Again");
-            setLoading(false);
-          }
-        }
-      },
-      500
-    );
+        },
+        500
+      );
+    }
+  
+    return debouncedValidators.current[fieldName];
   };
+
+  console.log(loadingMap);
+  
 
   const makeValidator = (fieldName: string) => (_: any, value: string) => {
     if (!value) return Promise.resolve();
@@ -71,6 +146,14 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
       getDebouncedValidator(fieldName)(value, resolve, reject)
     );
   };
+
+  useEffect(() => {
+    return () => {
+      Object.values(debouncedValidators.current).forEach((debounceFn) =>
+        debounceFn.cancel()
+      );
+    };
+  }, []);
 
   const getTrackKey = (item: TracksData): string => {
     const name = item.track.name;
@@ -109,115 +192,118 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
   }
 
   return (
-    <Splitter
-      style={{
-        paddingLeft: 16,
-        paddingRight: 16,
-        height: "100%",
-      }}
-    >
-      <Splitter.Panel
+    <>
+      {contextHolder}
+      <Splitter
         style={{
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
+          paddingLeft: 16,
+          paddingRight: 16,
           height: "100%",
         }}
-        min={159}
       >
-        <Form form={form}>
-          <Form.Item
-            name="playlist1"
-            layout="vertical"
-            rules={[{ validator: makeValidator("playlist1") }]}
-            validateTrigger="onChange"
-            style={{ paddingTop: 14, paddingBottom: 20 }}
-            // Need to keep div as helper to keep spacing consistent
-            help={<div></div>}
-          >
-            <Flex justify="center">
-              <Input
-                placeholder="Playlist URL / ID"
-                style={{
-                  width: 240,
-                  textAlign: "center",
-                }}
-              ></Input>
-            </Flex>
-          </Form.Item>
-        </Form>
-
-        <div
-          className="Tracks-Container"
+        <Splitter.Panel
           style={{
-            flex: 1,
-            overflowY: "auto",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            backgroundColor: "rgb(15, 15, 15)",
-            borderRadius: 8,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            height: "100%",
           }}
+          min={159}
         >
-          <TrackDisplay
-            filterMode={filterMode}
-            playlistData={playlist1}
-            matchMap={matchMap1}
-            loading={loading}
-            name="playlist1"
-          />
-        </div>
-      </Splitter.Panel>
+          <Form form={form}>
+            <Form.Item
+              name="playlist1"
+              layout="vertical"
+              rules={[{ validator: makeValidator("playlist1") }]}
+              validateTrigger="onChange"
+              style={{ paddingTop: 14, paddingBottom: 20 }}
+              help=""
+            >
+              <Flex justify="center">
+                <Input
+                  placeholder="Playlist URL / ID"
+                  style={{
+                    width: 240,
+                    textAlign: "center",
+                  }}
+                ></Input>
+              </Flex>
+            </Form.Item>
+          </Form>
 
-      <Splitter.Panel
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          height: "100%",
-        }}
-        min={159}
-      >
-        <Form form={form}>
-          <Form.Item
-            name="playlist2"
-            layout="vertical"
-            rules={[{ validator: makeValidator("playlist2") }]}
-            validateTrigger="onChange"
-            style={{ paddingTop: 14, paddingBottom: 20 }}
+          <div
+            className="Tracks-Container"
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              backgroundColor: "rgb(15, 15, 15)",
+              borderRadius: 8,
+            }}
           >
-            <Flex justify="center">
-              <Input
-                placeholder="Playlist URL / ID"
-                style={{
-                  width: 240,
-                  textAlign: "center",
-                }}
-              />
-            </Flex>
-          </Form.Item>
-        </Form>
+            <TrackDisplay
+              filterMode={filterMode}
+              playlistData={playlist1}
+              matchMap={matchMap1}
+              loading={loadingMap["playlist1"]}
+              name="playlist1"
+            />
+          </div>
+        </Splitter.Panel>
 
-        <div
-          className="Tracks-Container"
+        <Splitter.Panel
           style={{
-            flex: 1,
-            overflowY: "auto",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            backgroundColor: "rgb(15, 15, 15)",
-            borderRadius: 8,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            height: "100%",
           }}
+          min={159}
         >
-          <TrackDisplay
-            filterMode={filterMode}
-            playlistData={playlist2}
-            matchMap={matchMap2}
-            loading={loading}
-            name="playlist2"
-          />
-        </div>
-      </Splitter.Panel>
-    </Splitter>
+          <Form form={form}>
+            <Form.Item
+              name="playlist2"
+              layout="vertical"
+              rules={[{ validator: makeValidator("playlist2") }]}
+              validateTrigger="onChange"
+              style={{ paddingTop: 14, paddingBottom: 20 }}
+              help=""
+            >
+              <Flex justify="center">
+                <Input
+                  placeholder="Playlist URL / ID"
+                  style={{
+                    width: 240,
+                    textAlign: "center",
+                  }}
+                />
+              </Flex>
+            </Form.Item>
+          </Form>
+
+          <div
+            className="Tracks-Container"
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              backgroundColor: "rgb(15, 15, 15)",
+              borderRadius: 8,
+            }}
+          >
+            <TrackDisplay
+              filterMode={filterMode}
+              playlistData={playlist2}
+              matchMap={matchMap2}
+              loading={loadingMap["playlist2"]}
+              name="playlist2"
+            />
+          </div>
+        </Splitter.Panel>
+      </Splitter>
+    </>
   );
 };
 
