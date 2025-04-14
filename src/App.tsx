@@ -19,11 +19,9 @@ const App = () => {
       .get("http://localhost:8080/api/user", { withCredentials: true })
       .then((response) => {
         setUserData(response.data);
-        console.log(response);
         setUserDataLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching user data", error.response);
         setUserDataLoading(false);
       });
   }, []);
@@ -35,11 +33,7 @@ const App = () => {
   if (userData) {
     return (
       <Flex vertical style={{ height: "100vh", overflow: "hidden" }}>
-        {/* <Flex style={{ flex: 1, overflow: "hidden" }}> */}
         <MainContainer userData={userData} />
-        {/* </Flex> */}
-
-        {/* Keeping Above Commented, Just In Case It's Needed Later */}
       </Flex>
     );
   }

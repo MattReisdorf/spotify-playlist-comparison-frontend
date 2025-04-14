@@ -13,7 +13,6 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
   const [trackData, setTrackData] = useState<Record<string, PlaylistResponse>>(
     {}
   );
-  // const [loading, setLoading] = useState<boolean>(false);
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({
     playlist1: false,
     playlist2: false,
@@ -27,58 +26,6 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  // const getDebouncedValidator = (fieldName: string) => {
-  //   if (!debouncedValidators.current[fieldName]) {
-  //     debouncedValidators.current[fieldName] = lodash.debounce(
-  //       async (playlist: string, resolve: Function, reject: Function) => {
-  //         if (abortControllerRef.current[fieldName]) {
-  //           abortControllerRef.current[fieldName]!.abort();
-  //         }
-
-  //         const controller = new AbortController();
-  //         abortControllerRef.current[fieldName] = controller;
-
-  //         try {
-  //           setLoading(true);
-  //           const response = await axios.get(
-  //             `http://localhost:8080/api/playlist?playlist=${playlist}`,
-  //             {
-  //               withCredentials: true,
-  //               signal: controller.signal,
-  //             }
-  //           );
-
-  //           if (response.data.id) {
-  //             setTrackData((prev) => ({
-  //               ...prev,
-  //               [fieldName]: response.data,
-  //             }));
-  //             resolve();
-  //           } else {
-  //             reject();
-  //           }
-  //         } catch (error: any) {
-  //           if (axios.isCancel(error) || error.name === "CanceledError") {
-  //             resolve();
-  //           } else {
-  //             console.error(error.response?.data || error.message);
-  //             messageApi.open({
-  //               type: "error",
-  //               content: error.response?.data || "Something Went Wrong",
-  //             });
-  //             reject();
-  //           }
-  //         } finally {
-  //           setLoading(false);
-  //         }
-  //       },
-  //       500
-  //     );
-  //   }
-
-  //   return debouncedValidators.current[fieldName];
-  // };
-
   const getDebouncedValidator = (fieldName: string) => {
     if (!debouncedValidators.current[fieldName]) {
       debouncedValidators.current[fieldName] = lodash.debounce(
@@ -86,13 +33,13 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
           if (abortControllerRef.current[fieldName]) {
             abortControllerRef.current[fieldName]!.abort();
           }
-  
+
           const controller = new AbortController();
           abortControllerRef.current[fieldName] = controller;
-  
+
           try {
             setLoadingMap((prev) => ({ ...prev, [fieldName]: true }));
-  
+
             const response = await axios.get(
               `http://localhost:8080/api/playlist?playlist=${playlist}`,
               {
@@ -100,7 +47,7 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
                 signal: controller.signal,
               }
             );
-  
+
             if (response.data.id) {
               setTrackData((prev) => ({
                 ...prev,
@@ -119,10 +66,10 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
                 type: "error",
                 content: error.response?.data || "Something Went Wrong",
                 duration: 5,
-                className: 'custom-class',
+                className: "custom-class",
                 style: {
-                  marginTop: '74px',
-                }
+                  marginTop: "74px",
+                },
               });
               reject();
             }
@@ -133,12 +80,9 @@ const PlaylistsContainer = ({ filterMode }: { filterMode: FilterMode }) => {
         500
       );
     }
-  
+
     return debouncedValidators.current[fieldName];
   };
-
-  console.log(loadingMap);
-  
 
   const makeValidator = (fieldName: string) => (_: any, value: string) => {
     if (!value) return Promise.resolve();

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { PlaylistResponse, TracksData } from "../types/playlistData";
 import "../App.css";
 import { Content, Header } from "antd/es/layout/layout";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from "@ant-design/icons";
 
 type FilterMode = "none" | "playlist1" | "playlist2";
 
@@ -20,32 +20,29 @@ const TrackDisplay = ({
   name: string;
   filterMode: FilterMode;
 }) => {
-
-  console.log("TrackDisplay Props: " , { name, loading });
-
   const getTrackKey = (item: TracksData): string => {
     const name = item.track.name;
     const artist = item.track.artists[0].name;
     return `${name}::${artist}`;
   };
 
-  // const [loadingTest, setLoadingTest] = useState<boolean>(true);
-
   if (loading) {
     return (
-      <Flex vertical justify="center" align="center" style = {{height: '100%'}}>
-        <Spin size = "large" tip = "Loading Playlist" 
-          indicator = {
-            <LoadingOutlined 
+      <Flex vertical justify="center" align="center" style={{ height: "100%" }}>
+        <Spin
+          size="large"
+          tip="Loading Playlist"
+          indicator={
+            <LoadingOutlined
               spin
-              style = {{
-                color: 'rgb(46, 46, 46)'
-              }}  
+              style={{
+                color: "rgb(46, 46, 46)",
+              }}
             />
           }
         />
       </Flex>
-    )
+    );
   }
 
   if (!playlistData) {
@@ -64,20 +61,6 @@ const TrackDisplay = ({
 
     return aName.localeCompare(bName);
   });
-
-  console.log("filterMode: ", filterMode);
-
-  console.log("loading: ", loading);
-
-  // if (loading) {
-  //   return (
-  //     <img
-  //           src="Spotify_Primary_Logo_RGB_Green.png"
-  //           alt="Spotify Primary Logo"
-  //           style={{ height: 50, width: 50 }}
-  //         />
-  //   )
-  // }
 
   return (
     <Flex vertical>
