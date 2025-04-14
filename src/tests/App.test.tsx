@@ -43,8 +43,18 @@ jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe("App", () => {
+  const originalLocation = window.location;
+
   beforeEach(() => {
     jest.resetAllMocks();
+    // Reset location, in case of parallel testing with login redirect
+    delete (window as any).location;
+    (window as any).location = { ...originalLocation, assign: jest.fn() };
+  });
+
+  afterEach(() => {
+    // Restore original location
+    window.location = originalLocation as any;
   });
 
   test("Show blank page when attempting to load user data", async () => {
@@ -85,9 +95,16 @@ describe("App", () => {
       response: { status: 401 },
     });
 
-    const assignMock = jest.fn();
+    let redirectedTo = "";
     delete (window as any).location;
-    (window as any).location = { assign: assignMock };
+    (window as any).location = {
+      get href() {
+        return redirectedTo;
+      },
+      set href(value: string) {
+        redirectedTo = value;
+      },
+    };
 
     render(<App />);
     const loginBtn = await screen.findByRole("button", {
@@ -95,6 +112,7 @@ describe("App", () => {
     });
 
     userEvent.click(loginBtn);
-    expect(window.location.href).toBe("http://localhost:8080/login");
+
+    expect(redirectedTo).toBe("http://localhost:8080/login");
   });
 });
